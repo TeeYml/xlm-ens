@@ -1,12 +1,27 @@
-use thiserror::Error;
+use core::fmt;
 use xlm_ns_common::CommonError;
 
-#[derive(Debug, Error)]
+#[derive(Debug)]
 pub enum RegistryError {
-    #[error("name is already registered")]
     AlreadyRegistered,
-    #[error("name was not found")]
     NotFound,
-    #[error(transparent)]
-    Validation(#[from] CommonError),
+    Validation(CommonError),
+}
+
+impl fmt::Display for RegistryError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::AlreadyRegistered => f.write_str("name is already registered"),
+            Self::NotFound => f.write_str("name was not found"),
+            Self::Validation(error) => write!(f, "{error}"),
+        }
+    }
+}
+
+impl std::error::Error for RegistryError {}
+
+impl From<CommonError> for RegistryError {
+    fn from(value: CommonError) -> Self {
+        Self::Validation(value)
+    }
 }

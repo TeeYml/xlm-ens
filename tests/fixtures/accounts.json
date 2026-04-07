@@ -1,0 +1,16 @@
+{
+  "accounts": [
+    {
+      "name": "alice",
+      "public_key": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF",
+      "secret_key": "SA",
+      "funded": true
+    },
+    {
+      "name": "bob",
+      "public_key": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWHF",
+      "secret_key": "SB",
+      "funded": true
+    }
+  ]
+}

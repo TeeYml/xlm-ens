@@ -2,6 +2,8 @@ pub mod expiry;
 pub mod pricing;
 pub mod test;
 
+use core::fmt;
+
 use expiry::{expiry_from_now, within_grace_period};
 use pricing::price_for_label;
 
@@ -11,11 +13,20 @@ pub struct RegistrationQuote {
     pub expiry_unix: u64,
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug)]
 pub enum RegistrarError {
-    #[error("fee paid is below required amount")]
     InsufficientFee,
 }
+
+impl fmt::Display for RegistrarError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::InsufficientFee => f.write_str("fee paid is below required amount"),
+        }
+    }
+}
+
+impl std::error::Error for RegistrarError {}
 
 pub fn quote_registration(label: &str, years: u64, now_unix: u64) -> RegistrationQuote {
     let annual_fee = price_for_label(label);

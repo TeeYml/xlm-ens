@@ -1,5 +1,5 @@
 use crate::errors::SdkError;
-use crate::types::{RegistrationRequest, ResolutionResult, RenewalRequest};
+use crate::types::{RegistrationRequest, RenewalRequest, ResolutionResult};
 
 #[derive(Debug, Clone)]
 pub struct XlmNsClient {

@@ -24,10 +24,7 @@ impl RegistryStorage {
     }
 
     pub fn transfer(&mut self, name: &str, new_owner: String) -> Result<(), RegistryError> {
-        let entry = self
-            .entries
-            .get_mut(name)
-            .ok_or(RegistryError::NotFound)?;
+        let entry = self.entries.get_mut(name).ok_or(RegistryError::NotFound)?;
         entry.record.owner = new_owner;
         Ok(())
     }

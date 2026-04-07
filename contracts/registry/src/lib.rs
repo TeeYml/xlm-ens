@@ -23,7 +23,11 @@ impl RegistryContract {
         self.storage.get(name)
     }
 
-    pub fn transfer(&mut self, name: &str, new_owner: impl Into<String>) -> Result<(), RegistryError> {
+    pub fn transfer(
+        &mut self,
+        name: &str,
+        new_owner: impl Into<String>,
+    ) -> Result<(), RegistryError> {
         self.storage.transfer(name, new_owner.into())
     }
 }

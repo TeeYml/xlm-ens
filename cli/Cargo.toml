@@ -1,0 +1,9 @@
+[package]
+name = "xlm-ns-cli"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+xlm-ns-auction = { path = "../contracts/auction" }
+xlm-ns-sdk = { path = "../packages/xlm-ns-sdk" }

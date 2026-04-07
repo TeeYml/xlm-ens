@@ -1,9 +1,18 @@
-use thiserror::Error;
+use core::fmt;
 
-#[derive(Debug, Error)]
+#[derive(Debug)]
 pub enum SdkError {
-    #[error("invalid request: {0}")]
     InvalidRequest(String),
-    #[error("transport error: {0}")]
     Transport(String),
 }
+
+impl fmt::Display for SdkError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::InvalidRequest(message) => write!(f, "invalid request: {message}"),
+            Self::Transport(message) => write!(f, "transport error: {message}"),
+        }
+    }
+}
+
+impl std::error::Error for SdkError {}

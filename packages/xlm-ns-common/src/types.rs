@@ -1,13 +1,11 @@
-use serde::{Deserialize, Serialize};
-
 pub type NameHash = [u8; 32];
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Tld {
     Xlm,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NameRecord {
     pub label: String,
     pub tld: Tld,

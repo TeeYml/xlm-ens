@@ -1,13 +1,24 @@
-use thiserror::Error;
+use core::fmt;
 
-#[derive(Debug, Error, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum CommonError {
-    #[error("name is too short")]
     NameTooShort,
-    #[error("name is too long")]
     NameTooLong,
-    #[error("name contains invalid characters")]
     InvalidCharacters,
-    #[error("tld is not supported")]
     UnsupportedTld,
 }
+
+impl fmt::Display for CommonError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let message = match self {
+            Self::NameTooShort => "name is too short",
+            Self::NameTooLong => "name is too long",
+            Self::InvalidCharacters => "name contains invalid characters",
+            Self::UnsupportedTld => "tld is not supported",
+        };
+
+        f.write_str(message)
+    }
+}
+
+impl std::error::Error for CommonError {}

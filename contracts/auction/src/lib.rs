@@ -18,6 +18,8 @@ impl AuctionContract {
     }
 
     pub fn settle(&self, name: &str) -> Option<Settlement> {
-        self.auctions.get(name).and_then(|bids| settle::settle_vickrey(bids))
+        self.auctions
+            .get(name)
+            .and_then(|bids| settle::settle_vickrey(bids))
     }
 }
