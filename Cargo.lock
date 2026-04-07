@@ -5,10 +5,16 @@ version = 4
 [[package]]
 name = "xlm-ns-auction"
 version = "0.1.0"
+dependencies = [
+ "xlm-ns-common",
+]
 
 [[package]]
 name = "xlm-ns-bridge"
 version = "0.1.0"
+dependencies = [
+ "xlm-ns-common",
+]
 
 [[package]]
 name = "xlm-ns-cli"
@@ -57,3 +63,6 @@ dependencies = [
 [[package]]
 name = "xlm-ns-subdomain"
 version = "0.1.0"
+dependencies = [
+ "xlm-ns-common",
+]
