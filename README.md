@@ -31,13 +31,6 @@ stubs:
   contract logic.
 - Unit tests for all contract crates covering the main happy-path flows.
 
-What is not implemented yet:
-
-- Soroban storage primitives and entrypoint macros.
-- On-chain authorization using Stellar accounts and signatures.
-- Real payment settlement, token transfers, and chain messaging.
-- Production deployment scripts and end-to-end integration tests.
-
 ## Workspace layout
 
 ### Contracts
@@ -181,15 +174,3 @@ TMPDIR=/tmp cargo test --workspace
 
 `TMPDIR=/tmp` is used here because the current sandbox environment does not allow
 Rust to create temporary build directories in the default macOS temp location.
-
-## Recommended next steps
-
-The highest-value contract work from here is:
-
-1. Replace the in-memory Rust maps with Soroban storage accessors.
-2. Introduce real auth boundaries for owner-only and controller-only actions.
-3. Connect registrar success paths directly into registry writes.
-4. Add end-to-end tests that exercise registrar, registry, resolver, NFT, and
-   subdomain flows together.
-5. Replace placeholder bridge payload routing with actual Axelar/Stellar message
-   integration.
