@@ -31,13 +31,13 @@ pub struct Auction {
     pub starts_at: u64,
     pub ends_at: u64,
     pub bids: Vec<Bid>,
-    pub settlement: Option<Settlement>,
 }
 
 #[derive(Clone)]
 #[contracttype]
 enum DataKey {
     Auction(String),
+    Settlement(String),
 }
 
 #[contracterror]
@@ -78,7 +78,6 @@ impl AuctionContract {
             starts_at,
             ends_at,
             bids: Vec::new(&env),
-            settlement: None,
         };
         env.storage().persistent().set(&key, &auction);
         Ok(())
@@ -95,7 +94,11 @@ impl AuctionContract {
             return Err(AuctionError::InvalidBid);
         }
         let mut auction = get_auction(&env, &name)?;
-        if auction.settlement.is_some() {
+        if env
+            .storage()
+            .persistent()
+            .has(&DataKey::Settlement(name.clone()))
+        {
             return Err(AuctionError::AlreadySettled);
         }
         if now_unix < auction.starts_at {
@@ -115,8 +118,12 @@ impl AuctionContract {
     }
 
     pub fn settle(env: Env, name: String, now_unix: u64) -> Result<Option<Settlement>, AuctionError> {
-        let mut auction = get_auction(&env, &name)?;
-        if auction.settlement.is_some() {
+        let auction = get_auction(&env, &name)?;
+        if env
+            .storage()
+            .persistent()
+            .has(&DataKey::Settlement(name.clone()))
+        {
             return Err(AuctionError::AlreadySettled);
         }
         if now_unix < auction.ends_at {
@@ -124,8 +131,11 @@ impl AuctionContract {
         }
 
         let settlement = settle_vickrey(&auction, now_unix);
-        auction.settlement = settlement.clone();
-        put_auction(&env, &name, &auction);
+        if let Some(ref finalized) = settlement {
+            env.storage()
+                .persistent()
+                .set(&DataKey::Settlement(name.clone()), finalized);
+        }
         Ok(settlement)
     }
 

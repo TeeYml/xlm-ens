@@ -67,7 +67,7 @@ impl RegistrarContract {
     }
 
     pub fn quote_registration(
-        env: Env,
+        _env: Env,
         label: String,
         years: u64,
         now_unix: u64,
