@@ -203,6 +203,24 @@ enum AuctionCommands {
         #[arg(long)]
         signer: Option<String>,
     },
+    /// Export all text records for a name.
+    Export {
+        /// Name to export text records for
+        name: String,
+        /// File to write records to (JSON). Prints to stdout if omitted.
+        #[arg(long)]
+        out: Option<PathBuf>,
+    },
+    /// Import text records for a name from a file.
+    Import {
+        /// Name to import text records to
+        name: String,
+        /// File containing records to import (JSON)
+        file: PathBuf,
+        /// Signer profile
+        #[arg(long)]
+        signer: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -348,6 +366,12 @@ async fn run() -> anyhow::Result<()> {
                 value,
                 signer,
             } => commands::text::run_set(config, &name, &key, value, resolve_signer(signer)?).await,
+            TextCommand::Export { name, out } => {
+                commands::text::run_export(config, cli.output, &name, out.as_deref()).await
+            }
+            TextCommand::Import { name, file, signer } => {
+                commands::text::run_import(config, cli.output, &name, &file, resolve_signer(signer)?).await
+            }
         },
         Commands::Transfer {
             name,

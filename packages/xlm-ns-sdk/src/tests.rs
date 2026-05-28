@@ -3,8 +3,10 @@ mod tests {
     use crate::client::XlmNsClient;
     use crate::errors::SdkError;
     use crate::types::{
-        RegistrationRequest, RenewalRequest, SubmissionStatus, TextRecordUpdate, TransferRequest,
+        RegistrationRequest, RenewalRequest, SubmissionStatus, TextRecordUpdate,
+        TextRecordsUpdate, TransferRequest,
     };
+    use std::collections::HashMap;
 
     fn client() -> XlmNsClient {
         XlmNsClient::builder("http://localhost")
@@ -84,6 +86,25 @@ mod tests {
                 name: "foo.xlm".into(),
                 key: "url".into(),
                 value: Some("https://example.xyz".into()),
+                signer: Some("owner".into()),
+            })
+            .await
+            .unwrap();
+        assert_eq!(submission.status, SubmissionStatus::Submitted);
+        assert_eq!(submission.signer.as_deref(), Some("owner"));
+    }
+
+    #[tokio::test]
+    async fn text_records_batch_update() {
+        let client = client();
+        let mut records = HashMap::new();
+        records.insert("url".to_string(), Some("https://example.xyz".to_string()));
+        records.insert("avatar".to_string(), None);
+
+        let submission = client
+            .set_text_records(TextRecordsUpdate {
+                name: "foo.xlm".into(),
+                records,
                 signer: Some("owner".into()),
             })
             .await

@@ -6,8 +6,8 @@ use crate::types::{
     NftRecord, RegisterChainRequest, RegisterParentRequest, RegistrarMetrics, RegistrationQuote,
     RegistrationReceipt, RegistrationRequest, RegistryEntry, RenewalReceipt, RenewalRequest,
     ResolutionRecord, ResolutionResult, ReverseResolution, Subdomain, SubmissionStatus, TextRecord,
-    TextRecordUpdate, TransactionSubmission, TransferRequest, TransferSubdomainRequest,
-    DEFAULT_FEE_CURRENCY,
+    TextRecordUpdate, TextRecordsUpdate, TransactionSubmission, TransferRequest,
+    TransferSubdomainRequest, DEFAULT_FEE_CURRENCY,
 };
 use std::collections::HashMap;
 use stellar_rpc_client::Client;
@@ -299,6 +299,25 @@ impl XlmNsClient {
 
         Ok(TransactionSubmission {
             tx_hash: "tx_text_record_mock".to_string(),
+            status: SubmissionStatus::Submitted,
+            ledger: None,
+            submitted_at: MOCK_REFERENCE_TIMESTAMP,
+            contract_id: self.resolver_contract_id.clone(),
+            network_passphrase: self.network_passphrase.clone(),
+            signer: update.signer,
+        })
+    }
+
+    pub async fn set_text_records(
+        &self,
+        update: TextRecordsUpdate,
+    ) -> Result<TransactionSubmission, SdkError> {
+        if update.name.trim().is_empty() {
+            return Err(SdkError::InvalidRequest("name must not be empty".into()));
+        }
+
+        Ok(TransactionSubmission {
+            tx_hash: "tx_text_records_mock".to_string(),
             status: SubmissionStatus::Submitted,
             ledger: None,
             submitted_at: MOCK_REFERENCE_TIMESTAMP,

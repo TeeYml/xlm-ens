@@ -264,6 +264,13 @@ pub struct TextRecordUpdate {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextRecordsUpdate {
+    pub name: String,
+    pub records: std::collections::HashMap<String, Option<String>>,
+    pub signer: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TransferRequest {
     pub name: String,
     pub new_owner: String,
