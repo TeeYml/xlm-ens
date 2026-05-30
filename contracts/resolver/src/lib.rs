@@ -184,7 +184,7 @@ impl ResolverContract {
         validate_text_record_key(&key).map_err(|_| ResolverError::InvalidKey)?;
 
         // Issue #315: Validate text record value size
-        if value.len() > MAX_TEXT_RECORD_VALUE_LENGTH as u32 {
+        if (value.len() as usize) > MAX_TEXT_RECORD_VALUE_LENGTH {
             return Err(ResolverError::TextRecordValueTooLong);
         }
 
@@ -255,8 +255,12 @@ impl ResolverContract {
 
     // Helper method to get the default (Stellar) address for backwards compatibility
     pub fn get_stellar_address(env: Env, name: String) -> Option<String> {
-        Self::resolve(env.clone(), name)
-            .and_then(|record| record.addresses.get(String::from_str(&env, DEFAULT_CHAIN)))
+        let env_for_key = env.clone();
+        Self::resolve(env, name).and_then(|record| {
+            record
+                .addresses
+                .get(String::from_str(&env_for_key, DEFAULT_CHAIN))
+        })
     }
 
     pub fn has_record(env: Env, name: String) -> bool {
@@ -289,11 +293,7 @@ impl ResolverContract {
     pub fn batch_resolve(env: Env, names: Vec<String>) -> Vec<Option<ResolutionRecord>> {
         let mut out = Vec::new(&env);
         for name in names.iter() {
-            out.push_back(
-                env.storage()
-                    .persistent()
-                    .get(&DataKey::Forward(name.clone())),
-            );
+            out.push_back(env.storage().persistent().get(&DataKey::Forward(name.clone())));
         }
         out
     }

@@ -4,6 +4,7 @@ use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, token, Address, Env, String, Vec,
 };
 use xlm_ns_common::soroban::validate_fqdn_soroban;
+use xlm_ns_common::time::is_time_window_open;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 #[contracttype]
@@ -47,7 +48,6 @@ enum DataKey {
 
 /// Bounded result window for auction discovery queries (#157).
 const MAX_AUCTION_RESULTS: u32 = 100;
-/// Maximum page size for filtered auction listings.
 const MAX_PAGE_SIZE: u32 = 100;
 
 #[contracterror]
@@ -138,7 +138,7 @@ impl AuctionContract {
                 continue;
             }
             if let Some(auction) = Self::auction(env.clone(), name.clone()) {
-                if now_unix >= auction.starts_at && now_unix <= auction.ends_at {
+                if is_time_window_open(now_unix, auction.starts_at, auction.ends_at) {
                     out.push_back(auction);
                 }
             }
@@ -183,10 +183,10 @@ impl AuctionContract {
         {
             return Err(AuctionError::AlreadySettled);
         }
-        if now_unix < auction.starts_at {
-            return Err(AuctionError::AuctionNotStarted);
-        }
-        if now_unix > auction.ends_at {
+        if !is_time_window_open(now_unix, auction.starts_at, auction.ends_at) {
+            if now_unix < auction.starts_at {
+                return Err(AuctionError::AuctionNotStarted);
+            }
             return Err(AuctionError::AuctionClosed);
         }
 
@@ -319,6 +319,7 @@ fn auction_index(env: &Env) -> Vec<String> {
         .unwrap_or_else(|| Vec::new(env))
 }
 
+#[allow(dead_code)]
 fn append_auction_name(env: &Env, name: &String) {
     let mut index = auction_index(env);
     index.push_back(name.clone());
